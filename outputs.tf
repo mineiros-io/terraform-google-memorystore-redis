@@ -4,7 +4,8 @@
 # ------------------------------------------------------------------------------
 
 output "redis_instance" {
-  value = try(google_redis_instance.redis[0], {})
+  description = "All attributes of the created 'google_redis_instance' resource."
+  value       = try(google_redis_instance.redis[0], {})
 }
 
 # ------------------------------------------------------------------------------
