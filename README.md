@@ -166,11 +166,11 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 The following attributes are exported in the outputs of the module:
 
-- **`module_enabled`**
+- [**`module_enabled`**](#output-module_enabled): *(`bool`)*<a name="output-module_enabled"></a>
 
   Whether this module is enabled.
 
-- **`redis_instance`**
+- [**`redis_instance`**](#output-redis_instance): *(`object(redis_instance)`)*<a name="output-redis_instance"></a>
 
   All attributes of the created `google_redis_instance` resource.
 
