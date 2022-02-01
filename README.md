@@ -49,7 +49,6 @@ module "terraform-google-memorystore-redis" {
     source = "github.com/mineiros-io/terraform-google-memorystore-redis.git?ref=v0.1.0"
 
     name           = "private-cache"
-    Project        = "example-project"
     redis_version  = "REDIS_4_0"
 }
 ```
@@ -82,10 +81,6 @@ See [variables.tf] and [examples/] for details and use-cases.
 
 #### Main Resource Configuration
 
-- [**`project`**](#var-project): *(**Required** `string`)*<a name="var-project"></a>
-
-  The ID of the project in which the resources belong.
-
 - [**`name`**](#var-name): *(**Required** `string`)*<a name="var-name"></a>
 
   The ID of the instance or a fully qualified identifier for the instance.
@@ -93,6 +88,10 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`redis_version`**](#var-redis_version): *(**Required** `string`)*<a name="var-redis_version"></a>
 
   The version of Redis software. For a list of available versions, please find <https://cloud.google.com/memorystore/docs/redis/supported-versions>
+
+- [**`project`**](#var-project): *(Optional `string`)*<a name="var-project"></a>
+
+  The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
 
 - [**`region`**](#var-region): *(Optional `string`)*<a name="var-region"></a>
 

@@ -64,7 +64,6 @@ section {
           source = "github.com/mineiros-io/terraform-google-memorystore-redis.git?ref=v0.1.0"
 
           name           = "private-cache"
-          Project        = "example-project"
           redis_version  = "REDIS_4_0"
       }
       ```
@@ -107,14 +106,6 @@ section {
       section {
         title = "Main Resource Configuration"
 
-        variable "project" {
-          required    = true
-          type        = string
-          description = <<-END
-            The ID of the project in which the resources belong.
-          END
-        }
-
         variable "name" {
           required    = true
           type        = string
@@ -128,6 +119,13 @@ section {
           type        = string
           description = <<-END
             The version of Redis software. For a list of available versions, please find <https://cloud.google.com/memorystore/docs/redis/supported-versions>
+          END
+        }
+
+        variable "project" {
+          type        = string
+          description = <<-END
+          The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
           END
         }
 

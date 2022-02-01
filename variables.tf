@@ -4,11 +4,6 @@
 # These variables must be set when using this module.
 # ---------------------------------------------------------------------------------------------------------------------
 
-variable "project" {
-  description = "(Required) The ID of the project in which the resources belong."
-  type        = string
-}
-
 variable "name" {
   description = "(Required) The ID of the instance or a fully qualified identifier for the instance."
   type        = string
@@ -23,6 +18,12 @@ variable "redis_version" {
 # OPTIONAL VARIABLES
 # These variables have defaults, but may be overridden.
 # ---------------------------------------------------------------------------------------------------------------------
+
+variable "project" {
+  description = "(Optional) The ID of the project in which the resource belongs. If it is not provided, the provider project is used."
+  type        = string
+  default     = null
+}
 
 variable "region" {
   description = "(Optional) The region to host the Redis instance in."
