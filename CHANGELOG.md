@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### BREAKING CHANGES
 - Drop support for Terraform `< 1.0`
+- Drop support for hashicorp/google-beta provider `< 4.9`
 
 ## [0.0.2]
 
