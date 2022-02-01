@@ -1,4 +1,3 @@
-
 # ---------------------------------------------------------------------------------------------------------------------
 # REQUIRED VARIABLES
 # These variables must be set when using this module.
@@ -118,20 +117,58 @@ variable "memory_size_gb" {
   default     = 1
 }
 
-# ------------------------------------------------------------------------------
+variable "maintenance_policy" {
+  description = "(Optional) Maintenance policy for the Redis instance. w"
+  type        = any
+  # type = object({
+  #   # (Optional) Description of what this policy is for with a max length of 512 characters.
+  #   description = optional(string)
+  #   weekly_maintenance_window = optional(object({
+  #     # (Optional) The day of week that maintenance updates occur. Defaults to "DAY_OF_WEEK_UNSPECIFIED". Possible values are:
+  #     # DAY_OF_WEEK_UNSPECIFIED: The day of the week is unspecified.
+  #     # MONDAY: Monday
+  #     # TUESDAY: Tuesday
+  #     # WEDNESDAY: Wednesday
+  #     # THURSDAY: Thursday
+  #     # FRIDAY: Friday
+  #     # SATURDAY: Saturday
+  #     # SUNDAY: Sunday Possible values are DAY_OF_WEEK_UNSPECIFIED, MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY, SATURDAY, and SUNDAY.
+  #     day = string
+  #     # (Optional) Start time of the window in UTC time.
+  #     start_time = object({
+  #       # (Optional) Hours of day in 24 hour format. Should be from 0 to 23.
+  #       hours = optional(number)
+  #       # (Optional) Minutes of hour of day. Must be from 0 to 59.
+  #       minutes = optional(number)
+  #       # (Optional) Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.
+  #       seconds = optional(number)
+  #       # (Optional) Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
+  #       nanos = optional(number)
+  #     })
+  #   }))
+  # })
+  default = null
+}
+
+# ----------------------------------------------------------------------------------------------------------------------
 # MODULE CONFIGURATION PARAMETERS
 # These variables are used to configure the module.
-# See https://medium.com/mineiros/the-ultimate-guide-on-how-to-write-terraform-modules-part-1-81f86d31f024
-# ------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------------------------------
 
 variable "module_enabled" {
   type        = bool
-  description = "(Optional) Whether to create resources within the module or not. Default is 'true'."
+  description = "(Optional) Whether or not to create resources within the module."
   default     = true
 }
 
+# variable "module_timeouts" {
+#   description = "(Optional) A map of timeout objects that is keyed by Terraform resource name defining timeouts for `create`, `update` and `delete` Terraform operations."
+#   type        = any
+#   default     = null
+# }
+
 variable "module_depends_on" {
   type        = any
-  description = "(Optional) A list of external resources the module depends_on. Default is '[]'."
+  description = "(Optional) A list of external resources the module depends on."
   default     = []
 }

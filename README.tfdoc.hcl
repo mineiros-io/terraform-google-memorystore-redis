@@ -37,7 +37,9 @@ section {
   title   = "terraform-google-memorystore-redis"
   toc     = true
   content = <<-END
-    A [Terraform](https://www.terraform.io) module to create a [Google Redis Instance](https://cloud.google.com/memorystore/docs/redis/) on [Google Cloud Services (GCP)](https://cloud.google.com/).
+    A [Terraform](https://www.terraform.io) module to create and manage a
+    [Google Memorystore Redis Instance](https://cloud.google.com/memorystore/docs/redis/)
+    on [Google Cloud Services (GCP)](https://cloud.google.com/).
 
     **_This module supports Terraform version 1
     and is compatible with the Terraform Google Provider version 4._**
@@ -77,156 +79,241 @@ section {
     END
 
     section {
-      title = "Top-level Arguments"
+      title = "Main Resource Configuration"
 
-      section {
-        title = "Module Configuration"
-
-        variable "module_enabled" {
-          type        = bool
-          default     = true
-          description = <<-END
-            Specifies whether resources in the module will be created.
-          END
-        }
-
-        variable "module_depends_on" {
-          type           = list(dependency)
-          description    = <<-END
-            A list of dependencies. Any object can be _assigned_ to this list to define a hidden external dependency.
-          END
-          readme_example = <<-END
-            module_depends_on = [
-              google_network.network
-            ]
-          END
-        }
+      variable "name" {
+        required    = true
+        type        = string
+        description = <<-END
+          The ID of the instance or a fully qualified identifier for the instance.
+        END
       }
 
-      section {
-        title = "Main Resource Configuration"
+      variable "redis_version" {
+        required    = true
+        type        = string
+        description = <<-END
+          The version of Redis software. For a list of available versions, please find <https://cloud.google.com/memorystore/docs/redis/supported-versions>
+        END
+      }
 
-        variable "name" {
-          required    = true
+      variable "project" {
+        type        = string
+        description = <<-END
+        The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
+        END
+      }
+
+      variable "region" {
+        type        = string
+        description = <<-END
+          The region to host the Redis instance in.
+        END
+      }
+
+      variable "authorized_network" {
+        type        = string
+        description = <<-END
+          The full name of the Google Compute Engine network to which the instance is connected. If left unspecified, the default network will be used.
+        END
+      }
+
+      variable "tier" {
+        type        = string
+        default     = "STANDARD_HA"
+        description = <<-END
+          The service tier of the instance. Options are `BASIC` and `STANDARD_HA`.
+        END
+      }
+
+      variable "location_id" {
+        type        = string
+        description = <<-END
+          The zone where the instance will be provisioned. If not provided, the service will choose a zone for the instance. For `STANDARD_HA` tier, instances will be created across two zones for protection against zonal failures. If `alternative_location_id` is also provided, it must be different from `location_id`.
+        END
+      }
+
+      variable "alternative_location_id" {
+        type        = string
+        default     = "null"
+        description = <<-END
+          The alternative zone where the instance will be provisioned.
+        END
+      }
+
+      variable "redis_configs" {
+        type        = map(any)
+        default     = {}
+        description = <<-END
+          The Redis configuration parameters. For details please find https://cloud.google.com/memorystore/docs/redis/reference/rest/v1/projects.locations.instances#Instance.FIELDS.redis_configs
+        END
+      }
+
+      variable "transit_encryption_mode" {
+        type        = string
+        default     = "DISABLED"
+        description = <<-END
+          The TLS mode of the Redis instance, If not provided, TLS is disabled for the instance. Possible values are `SERVER_AUTHENTICATION` for Client to Server traffic encryption and `DISABLED`.
+        END
+      }
+
+      variable "display_name" {
+        type        = string
+        description = <<-END
+          An arbitrary and optional user-provided name for the instance.
+        END
+      }
+
+      variable "reserved_ip_range" {
+        type        = string
+        description = <<-END
+          The CIDR range of internal addresses that are reserved for this instance. If not provided, the service will choose an unused `/29` block, for example, `10.0.0.0/29` or `192.168.0.0/29`. Ranges must be unique and non-overlapping with existing subnets in an authorized network.
+        END
+      }
+
+      variable "connect_mode" {
+        type        = string
+        default     = "DIRECT_PEERING"
+        description = <<-END
+          The connection mode of the Redis instance. Can be either `DIRECT_PEERING` or `PRIVATE_SERVICE_ACCESS`.
+        END
+      }
+
+      variable "labels" {
+        type        = map(string)
+        default     = {}
+        description = <<-END
+          The resource labels to represent user provided metadata.
+        END
+      }
+
+      variable "auth_enabled" {
+        type        = bool
+        default     = true
+        description = <<-END
+          Indicates whether OSS Redis AUTH is enabled for the instance. If set to `true` AUTH is enabled on the instance.
+        END
+      }
+
+      variable "memory_size_gb" {
+        type        = number
+        default     = 1
+        description = <<-END
+          Redis memory size in GiB.
+        END
+      }
+
+      variable "maintenance_policy" {
+        type           = object(maintenance_policy)
+        default        = {}
+        readme_example = <<-END
+          maintenance_policy = {
+            description = "Maintainence on Fridays"
+            weekly_maintenance_window = {
+              day = "FRIDAY"
+              start_time = {
+                hours   = 6
+                minutes = 30
+                seconds = 15
+                nanos   = 0
+              }
+            }
+          }
+        END
+
+        attribute "description" {
           type        = string
           description = <<-END
-            The ID of the instance or a fully qualified identifier for the instance.
+            Description of what this policy is for with a max length of 512 characters.
           END
         }
 
-        variable "redis_version" {
-          required    = true
-          type        = string
+        attribute "weekly_maintenance_window" {
+          type        = object(weekly_maintenance_window)
           description = <<-END
-            The version of Redis software. For a list of available versions, please find <https://cloud.google.com/memorystore/docs/redis/supported-versions>
+            Maintenance window that is applied to resources covered by this policy.
           END
-        }
+          readme_example = <<-END
+            weekly_maintenance_window = {
+              day = "FRIDAY"
+              start_time = {
+                hours   = 6
+                minutes = 30
+                seconds = 15
+                nanos   = 0
+              }
+            }
+          END
 
-        variable "project" {
-          type        = string
-          description = <<-END
-          The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
-          END
-        }
+          attribute "day" {
+            type        = string
+            default     = "DAY_OF_WEEK_UNSPECIFIED"
+            description = <<-END
+              The day of week that maintenance updates occur.
+            END
+          }
 
-        variable "region" {
-          type        = string
-          description = <<-END
-            The region to host the Redis instance in.
-          END
-        }
+          attribute "start_time" {
+            type        = object(start_time)
+            description = <<-END
+              Start time of the window in UTC time.
+            END
 
-        variable "authorized_network" {
-          type        = string
-          description = <<-END
-            The full name of the Google Compute Engine network to which the instance is connected. If left unspecified, the default network will be used.
-          END
-        }
+            attribute "hours" {
+              type        = number
+              description = <<-END
+                Hours of day in 24 hour format. Should be from 0 to 23.
+              END
+            }
 
-        variable "tier" {
-          type        = string
-          default     = "STANDARD_HA"
-          description = <<-END
-            The service tier of the instance. Options are `BASIC` and `STANDARD_HA`.
-          END
-        }
+            attribute "minutes" {
+              type        = number
+              description = <<-END
+                Minutes of hour of day. Must be from 0 to 59.
+              END
+            }
 
-        variable "location_id" {
-          type        = string
-          description = <<-END
-            The zone where the instance will be provisioned. If not provided, the service will choose a zone for the instance. For `STANDARD_HA` tier, instances will be created across two zones for protection against zonal failures. If `alternative_location_id` is also provided, it must be different from `location_id`.
-          END
-        }
+            attribute "seconds" {
+              type        = number
+              description = <<-END
+                Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.
+              END
+            }
 
-        variable "alternative_location_id" {
-          type        = string
-          default     = "null"
-          description = <<-END
-            The alternative zone where the instance will be provisioned.
-          END
+            attribute "nanos" {
+              type        = number
+              description = <<-END
+                Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
+              END
+            }
+          }
         }
+      }
+    }
 
-        variable "redis_configs" {
-          type        = map(any)
-          default     = {}
-          description = <<-END
-            The Redis configuration parameters. For details please find https://cloud.google.com/memorystore/docs/redis/reference/rest/v1/projects.locations.instances#Instance.FIELDS.redis_configs
-          END
-        }
+    section {
+      title = "Module Configuration"
 
-        variable "transit_encryption_mode" {
-          type        = string
-          default     = "DISABLED"
-          description = <<-END
-            The TLS mode of the Redis instance, If not provided, TLS is disabled for the instance. Possible values are `SERVER_AUTHENTICATION` for Client to Server traffic encryption and `DISABLED`.
-          END
-        }
+      variable "module_enabled" {
+        type        = bool
+        default     = true
+        description = <<-END
+          Specifies whether resources in the module will be created.
+        END
+      }
 
-        variable "display_name" {
-          type        = string
-          description = <<-END
-            An arbitrary and optional user-provided name for the instance.
-          END
-        }
-
-        variable "reserved_ip_range" {
-          type        = string
-          description = <<-END
-            The CIDR range of internal addresses that are reserved for this instance. If not provided, the service will choose an unused `/29` block, for example, `10.0.0.0/29` or `192.168.0.0/29`. Ranges must be unique and non-overlapping with existing subnets in an authorized network.
-          END
-        }
-
-        variable "connect_mode" {
-          type        = string
-          default     = "DIRECT_PEERING"
-          description = <<-END
-            The connection mode of the Redis instance. Can be either `DIRECT_PEERING` or `PRIVATE_SERVICE_ACCESS`.
-          END
-        }
-
-        variable "labels" {
-          type        = map(string)
-          default     = {}
-          description = <<-END
-            The resource labels to represent user provided metadata.
-          END
-        }
-
-        variable "auth_enabled" {
-          type        = bool
-          default     = true
-          description = <<-END
-            Indicates whether OSS Redis AUTH is enabled for the instance. If set to `true` AUTH is enabled on the instance.
-          END
-        }
-
-        variable "memory_size_gb" {
-          type        = number
-          default     = 1
-          description = <<-END
-            Redis memory size in GiB.
-          END
-        }
+      variable "module_depends_on" {
+        type           = list(dependency)
+        description    = <<-END
+          A list of dependencies.
+          Any object can be _assigned_ to this list to define a hidden external dependency.
+        END
+        default        = []
+        readme_example = <<-END
+          module_depends_on = [
+            google_compute_network.private_redis_network
+          ]
+        END
       }
     }
   }
