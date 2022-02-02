@@ -63,7 +63,7 @@ section {
 
       ```hcl
       module "terraform-google-memorystore-redis" {
-          source = "github.com/mineiros-io/terraform-google-memorystore-redis.git?ref=v0.1.0"
+          source = "github.com/mineiros-io/terraform-google-memorystore-redis.git?ref=v0.0.3"
 
           name           = "private-cache"
           redis_version  = "REDIS_4_0"
