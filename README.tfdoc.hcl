@@ -322,15 +322,21 @@ section {
     title   = "Module Outputs"
     content = <<-END
       The following attributes are exported in the outputs of the module:
-
-      - **`module_enabled`**
-
-        Whether this module is enabled.
-
-      - **`redis_instance`**
-
-        All attributes of the created `google_redis_instance` resource.
     END
+
+    output "module_enabled" {
+      type        = bool
+      description = <<-END
+        Whether this module is enabled.
+      END
+    }
+
+    output "redis_instance" {
+      type        = object(redis_instance)
+      description = <<-END
+        All attributes of the created `google_redis_instance` resource.
+      END
+    }
   }
 
   section {
