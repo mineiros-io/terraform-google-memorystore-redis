@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### BREAKING CHANGES
+- Drop support for Terraform `< 1.0`
+- Drop support for hashicorp/google-beta provider `< 4.9`
+
+### Added
+
+- Add unit tests
+
+### Changed
+
+- Changed `var.provider` to be optional instead of required since it can be inherited from the provider configuration
+
 ## [0.0.2]
 
 ### Added
