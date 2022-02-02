@@ -63,13 +63,8 @@ Alternatively, you can also run the tests without Docker.
 
 <!-- References -->
 
-<!-- markdown-link-check-disable -->
-
 [makefile]: https://github.com/mineiros-io/terraform-google-monitoring-notification-channel/blob/main/Makefile
 [testdirectory]: https://github.com/mineiros-io/terraform-google-monitoring-notification-channel/tree/main/test
-
-<!-- markdown-link-check-enable -->
-
 [homepage]: https://mineiros.io/?ref=terraform-google-monitoring-notification-channel
 [terratest]: https://github.com/gruntwork-io/terratest
 [package testing]: https://golang.org/pkg/testing/
