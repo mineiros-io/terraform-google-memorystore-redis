@@ -24,5 +24,32 @@ resource "google_redis_instance" "redis" {
 
   labels = var.labels
 
+  dynamic "maintenance_policy" {
+    for_each = var.maintenance_policy != null ? [var.maintenance_policy] : []
+
+    content {
+      description = try(maintenance_policy.value.description, null)
+
+      dynamic "weekly_maintenance_window" {
+        for_each = try([maintenance_policy.value.weekly_maintenance_window], [])
+
+        content {
+          day = try(weekly_maintenance_window.value.day, "DAY_OF_WEEK_UNSPECIFIED")
+
+          dynamic "start_time" {
+            for_each = try([weekly_maintenance_window.value.start_time], [])
+
+            content {
+              hours   = try(start_time.value.hours, 0)
+              minutes = try(start_time.value.minutes, 30)
+              seconds = try(start_time.value.seconds, 0)
+              nanos   = try(start_time.value.nanos, 0)
+            }
+          }
+        }
+      }
+    }
+  }
+
   depends_on = [var.module_depends_on]
 }

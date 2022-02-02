@@ -8,7 +8,9 @@
 
 # terraform-google-memorystore-redis
 
-A [Terraform](https://www.terraform.io) module to create a [Google Redis Instance](https://cloud.google.com/memorystore/docs/redis/) on [Google Cloud Services (GCP)](https://cloud.google.com/).
+A [Terraform](https://www.terraform.io) module to create and manage a
+[Google Memorystore Redis Instance](https://cloud.google.com/memorystore/docs/redis/)
+on [Google Cloud Services (GCP)](https://cloud.google.com/).
 
 **_This module supports Terraform version 1
 and is compatible with the Terraform Google Provider version 4._**
@@ -21,9 +23,8 @@ secure, and production-grade cloud infrastructure.
 - [Module Features](#module-features)
 - [Getting Started](#getting-started)
 - [Module Argument Reference](#module-argument-reference)
-  - [Top-level Arguments](#top-level-arguments)
-    - [Module Configuration](#module-configuration)
-    - [Main Resource Configuration](#main-resource-configuration)
+  - [Main Resource Configuration](#main-resource-configuration)
+  - [Module Configuration](#module-configuration)
 - [Module Outputs](#module-outputs)
 - [External Documentation](#external-documentation)
   - [Google Documentation](#google-documentation)
@@ -49,7 +50,6 @@ module "terraform-google-memorystore-redis" {
     source = "github.com/mineiros-io/terraform-google-memorystore-redis.git?ref=v0.1.0"
 
     name           = "private-cache"
-    Project        = "example-project"
     redis_version  = "REDIS_4_0"
 }
 ```
@@ -58,33 +58,7 @@ module "terraform-google-memorystore-redis" {
 
 See [variables.tf] and [examples/] for details and use-cases.
 
-### Top-level Arguments
-
-#### Module Configuration
-
-- [**`module_enabled`**](#var-module_enabled): *(Optional `bool`)*<a name="var-module_enabled"></a>
-
-  Specifies whether resources in the module will be created.
-
-  Default is `true`.
-
-- [**`module_depends_on`**](#var-module_depends_on): *(Optional `list(dependency)`)*<a name="var-module_depends_on"></a>
-
-  A list of dependencies. Any object can be _assigned_ to this list to define a hidden external dependency.
-
-  Example:
-
-  ```hcl
-  module_depends_on = [
-    google_network.network
-  ]
-  ```
-
-#### Main Resource Configuration
-
-- [**`project`**](#var-project): *(**Required** `string`)*<a name="var-project"></a>
-
-  The ID of the project in which the resources belong.
+### Main Resource Configuration
 
 - [**`name`**](#var-name): *(**Required** `string`)*<a name="var-name"></a>
 
@@ -93,6 +67,10 @@ See [variables.tf] and [examples/] for details and use-cases.
 - [**`redis_version`**](#var-redis_version): *(**Required** `string`)*<a name="var-redis_version"></a>
 
   The version of Redis software. For a list of available versions, please find <https://cloud.google.com/memorystore/docs/redis/supported-versions>
+
+- [**`project`**](#var-project): *(Optional `string`)*<a name="var-project"></a>
+
+  The ID of the project in which the resource belongs. If it is not provided, the provider project is used.
 
 - [**`region`**](#var-region): *(Optional `string`)*<a name="var-region"></a>
 
@@ -161,6 +139,104 @@ See [variables.tf] and [examples/] for details and use-cases.
   Redis memory size in GiB.
 
   Default is `1`.
+
+- [**`maintenance_policy`**](#var-maintenance_policy): *(Optional `object(maintenance_policy)`)*<a name="var-maintenance_policy"></a>
+
+  Default is `{}`.
+
+  Example:
+
+  ```hcl
+  maintenance_policy = {
+    description = "Maintainence on Fridays"
+    weekly_maintenance_window = {
+      day = "FRIDAY"
+      start_time = {
+        hours   = 6
+        minutes = 30
+        seconds = 15
+        nanos   = 0
+      }
+    }
+  }
+  ```
+
+  The `maintenance_policy` object accepts the following attributes:
+
+  - [**`description`**](#attr-maintenance_policy-description): *(Optional `string`)*<a name="attr-maintenance_policy-description"></a>
+
+    Description of what this policy is for with a max length of 512 characters.
+
+  - [**`weekly_maintenance_window`**](#attr-maintenance_policy-weekly_maintenance_window): *(Optional `object(weekly_maintenance_window)`)*<a name="attr-maintenance_policy-weekly_maintenance_window"></a>
+
+    Maintenance window that is applied to resources covered by this policy.
+
+    Example:
+
+    ```hcl
+    weekly_maintenance_window = {
+      day = "FRIDAY"
+      start_time = {
+        hours   = 6
+        minutes = 30
+        seconds = 15
+        nanos   = 0
+      }
+    }
+    ```
+
+    The `weekly_maintenance_window` object accepts the following attributes:
+
+    - [**`day`**](#attr-maintenance_policy-weekly_maintenance_window-day): *(Optional `string`)*<a name="attr-maintenance_policy-weekly_maintenance_window-day"></a>
+
+      The day of week that maintenance updates occur.
+
+      Default is `"DAY_OF_WEEK_UNSPECIFIED"`.
+
+    - [**`start_time`**](#attr-maintenance_policy-weekly_maintenance_window-start_time): *(Optional `object(start_time)`)*<a name="attr-maintenance_policy-weekly_maintenance_window-start_time"></a>
+
+      Start time of the window in UTC time.
+
+      The `start_time` object accepts the following attributes:
+
+      - [**`hours`**](#attr-maintenance_policy-weekly_maintenance_window-start_time-hours): *(Optional `number`)*<a name="attr-maintenance_policy-weekly_maintenance_window-start_time-hours"></a>
+
+        Hours of day in 24 hour format. Should be from 0 to 23.
+
+      - [**`minutes`**](#attr-maintenance_policy-weekly_maintenance_window-start_time-minutes): *(Optional `number`)*<a name="attr-maintenance_policy-weekly_maintenance_window-start_time-minutes"></a>
+
+        Minutes of hour of day. Must be from 0 to 59.
+
+      - [**`seconds`**](#attr-maintenance_policy-weekly_maintenance_window-start_time-seconds): *(Optional `number`)*<a name="attr-maintenance_policy-weekly_maintenance_window-start_time-seconds"></a>
+
+        Seconds of minutes of the time. Must normally be from 0 to 59. An API may allow the value 60 if it allows leap-seconds.
+
+      - [**`nanos`**](#attr-maintenance_policy-weekly_maintenance_window-start_time-nanos): *(Optional `number`)*<a name="attr-maintenance_policy-weekly_maintenance_window-start_time-nanos"></a>
+
+        Fractions of seconds in nanoseconds. Must be from 0 to 999,999,999.
+
+### Module Configuration
+
+- [**`module_enabled`**](#var-module_enabled): *(Optional `bool`)*<a name="var-module_enabled"></a>
+
+  Specifies whether resources in the module will be created.
+
+  Default is `true`.
+
+- [**`module_depends_on`**](#var-module_depends_on): *(Optional `list(dependency)`)*<a name="var-module_depends_on"></a>
+
+  A list of dependencies.
+  Any object can be _assigned_ to this list to define a hidden external dependency.
+
+  Default is `[]`.
+
+  Example:
+
+  ```hcl
+  module_depends_on = [
+    google_compute_network.private_redis_network
+  ]
+  ```
 
 ## Module Outputs
 
