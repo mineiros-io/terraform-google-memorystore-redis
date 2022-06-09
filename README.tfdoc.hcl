@@ -63,7 +63,7 @@ section {
 
       ```hcl
       module "terraform-google-memorystore-redis" {
-          source = "github.com/mineiros-io/terraform-google-memorystore-redis.git?ref=v0.0.3"
+          source = "github.com/mineiros-io/terraform-google-memorystore-redis.git?ref=v0.0.4"
 
           name           = "private-cache"
           redis_version  = "REDIS_4_0"
@@ -229,8 +229,8 @@ section {
         }
 
         attribute "weekly_maintenance_window" {
-          type        = object(weekly_maintenance_window)
-          description = <<-END
+          type           = object(weekly_maintenance_window)
+          description    = <<-END
             Maintenance window that is applied to resources covered by this policy.
           END
           readme_example = <<-END

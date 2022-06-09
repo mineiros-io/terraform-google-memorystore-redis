@@ -51,5 +51,11 @@ resource "google_redis_instance" "redis" {
     }
   }
 
+  lifecycle {
+    ignore_changes = [
+      maintenance_schedule,
+    ]
+  }
+
   depends_on = [var.module_depends_on]
 }
